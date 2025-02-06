@@ -26,5 +26,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+  app.Map("/health", appBuilder => appBuilder.Run(async context =>
+        {
+            context.Response.StatusCode = 200; // Return OK status
+            await context.Response.WriteAsync("Healthy");
+        }));
 app.Run();

@@ -19,7 +19,7 @@ namespace NumberClassificationApi.Controllers
         [HttpGet("classify-number")]
         public async Task<IActionResult> ClassifyNumber([FromQuery] string number)
         {
-            if (!int.TryParse(number, out int num) || num < 0)
+            if (!double.TryParse(number, out double num))
             {
                 return BadRequest(new { number = "alphabet", error = true });
             }

@@ -4,6 +4,6 @@ namespace NumberClassificationApi.Interface
 {
     public interface INumberService
     {
-        Task<NumberProperties> ClassifyNumber(int number);
+        Task<NumberProperties> ClassifyNumber(double number);
     }
 }

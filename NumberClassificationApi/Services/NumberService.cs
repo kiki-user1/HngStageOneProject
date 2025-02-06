@@ -1,4 +1,4 @@
-﻿using NumberClassificationApi.Models; 
+﻿using NumberClassificationApi.Models;
 using NumberClassificationApi.Interface;
 
 namespace NumberClassificationApi.Services
@@ -11,19 +11,15 @@ namespace NumberClassificationApi.Services
         {
             _httpClientFactory = httpClientFactory;
         }
-        public async Task<NumberProperties> ClassifyNumber(int number)
+        public async Task<NumberProperties> ClassifyNumber(double number)
         {
             var properties = new List<string>();
 
             if (IsArmstrong(number)) properties.Add("armstrong");
             if (number % 2 != 0) properties.Add("odd");
+            else properties.Add("even");
 
             var funFact = await GetFunFact(number);
-
-            if(funFact == null)
-            {
-                return null;
-            }
 
             return new NumberProperties()
             {
@@ -33,10 +29,10 @@ namespace NumberClassificationApi.Services
                 properties = properties,
                 digit_sum = DigitSum(number),
                 fun_fact = funFact
-            }; 
+            };
         }
 
-        private bool IsPrime(int n)
+        private bool IsPrime(double n)
         {
             if (n < 2) return false;
             for (int i = 2; i <= Math.Sqrt(n); i++)
@@ -46,8 +42,9 @@ namespace NumberClassificationApi.Services
             return true;
         }
 
-        private bool IsPerfect(int n)
+        private bool IsPerfect(double n)
         {
+            if (n == 0) return false;
             int sum = 0;
             for (int i = 1; i < n; i++)
             {
@@ -56,7 +53,7 @@ namespace NumberClassificationApi.Services
             return sum == n;
         }
 
-        private bool IsArmstrong(int n)
+        private bool IsArmstrong(double n)
         {
             int digitCount = n.ToString().Length;
             int sum = (int)n.ToString()
@@ -65,12 +62,11 @@ namespace NumberClassificationApi.Services
             return sum == n;
         }
 
-        private int DigitSum(int n)
+        private int DigitSum(double n)
         {
-            return n.ToString().Select(d => int.Parse(d.ToString())).Sum();
+            return Math.Abs(n).ToString().Where(char.IsDigit).Select(d => int.Parse(d.ToString())).Sum();
         }
-
-        private async Task<string?> GetFunFact(int n)
+        private async Task<string?> GetFunFact(double n)
         {
             using var client = _httpClientFactory.CreateClient();
             try
@@ -78,7 +74,7 @@ namespace NumberClassificationApi.Services
                 var response = await client.GetStringAsync($"http://numbersapi.com/{n}/math?json");
                 var jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<FunFactResponse>(response);
 
-                return jsonResponse?.Text; 
+                return jsonResponse?.Text;
             }
             catch (HttpRequestException)
             {

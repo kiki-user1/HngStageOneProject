@@ -31,6 +31,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./NumberClassificationApi/Dockerfile
           push: true
           tags: ghcr.io/kiki-user1/HngStageOneProject:${{ github.sha }}
 
